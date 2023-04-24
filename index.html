@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>js calc</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+    <script>
+      let trailingResult = 0;
+let operationOptions = ['divide', 'multiply', 'subtract', 'add'];
+let workingOperation = "";
+
+function updateDisplay(input) {
+  let display = document.getElementById("display");
+  let secondaryDisplay = document.getElementById("secondaryDisplay");
+
+  if (display.innerHTML === "0" && operationOptions.indexOf(input) === -1) {
+    if (input === "decimal") {
+      display.innerHTML = "0.";
+    } else if (input === "negative-value") {
+      if (display.innerHTML.indexOf("-1") === -1) {
+        display.innerHTML = "-" + display.innerHTML
+      } else if (display.innerHTML.indexOf("-1" > -1)) {
+        display.innerHTML = display.innerHTML.slice(1, display.innerHTML.length);
+      }
+    } else {
+      display.innerHTML = input;
+    }
+  } else if (operationOptions.indexOf(input) >= 0) {
+    // console.log("Dealing with a operation");
+
+    if (trailingResult === display.innerHTML) {
+      // Operand button pressed twice exeception
+      workingOperation = input;
+    } else if (workingOperation === "") {
+      // Dealing without an operand
+      workingOperation = input;
+      trailingResult = display.innerHTML;
+      secondaryDisplay.innerHTML = trailingResult;
+      display.innerHTML = 0;
+    } else {
+      // Dealing with a set operand
+      // console.log(display.innerHTML, " Dealing with set operand");
+      trailingResult = calculate(trailingResult, display.innerHTML, workingOperation);
+      secondaryDisplay.innerHTML = trailingResult;
+      display.innerHTML = 0;
+      workingOperation = input;
+    }
+  } else if (input === "equals") {
+    display.innerHTML = calculate(trailingResult, display.innerHTML, workingOperation);
+    trailingResult = 0;
+    workingOperation = "";
+    secondaryDisplay.innerHTML = trailingResult;
+  } else if (input === "decimal") {
+    // console.log('decimal clicked');
+    if (display.innerHTML.indexOf(".") === -1) {
+      display.innerHTML += ".";
+    }
+    // console.log("decimal skipped because decimal already in number.");
+  } else if (input === "negative-value") {
+    // console.log("negative-value selected");
+    if (display.innerHTML.indexOf("-1") === -1) {
+      display.innerHTML = "-" + display.innerHTML
+    } else if (display.innerHTML.indexOf("-1" > -1)) {
+      display.innerHTML = display.innerHTML.slice(1, display.innerHTML.length);
+    }
+  } else {
+    display.innerHTML += input;
+  }
+  // 5 - 2 = / 2 =
+  // console.log(trailingResult, "<= trailingResult", display.innerHTML, " <= display.innerHTML", workingOperation, " <= workingOperation");
+}
+
+function clearDisplay() {
+  let display = document.getElementById("display");
+  let secondaryDisplay = document.getElementById("secondaryDisplay");
+  trailingResult = 0;
+  display.innerHTML = 0;
+  secondaryDisplay.innerHTML = trailingResult;
+}
+
+function calculate(firstNumber, secondNumber, operation) {
+  let result;
+  firstNumber = parseFloat(firstNumber);
+  secondNumber = parseFloat(secondNumber);
+  switch(operation) {
+    case "add":
+      // console.log("add calculated")
+      result = firstNumber + secondNumber;
+      break;
+    case "subtract":
+      // console.log("subtract calculated")
+      result = firstNumber - secondNumber;
+      break;
+    case "multiply":
+      // console.log("multiply calculated")
+      result = firstNumber * secondNumber;
+      break;
+    case "divide":
+      // console.log("divide calculated")
+      result = firstNumber / secondNumber;
+      break;
+    default:
+      console.log("Calculate switch statement missed something");
+  }
+  return result.toString();
+}
+    </script>
+  </head>
+  <body>
+   
+
+
+    <div class="container-fluid">
+
+   
+        <div class="row text-center">
+         <div class="col">
+            <h1 >JS Calculator</h1>
+        </div>
+        </div>
+    
+        <div class="row text-center">
+          <div class="col-8 ms-5">
+            <div id="display" class="bg-info text-center text-white py-5 my-3">0</div>
+          </div>
+            <div class="col-2">
+              <div id="secondaryDisplay" class="bg-secondary text-center text-white py-5 my-3">0</div>
+            </div>
+          
+        </div>
+
+        
+
+        <div class="d-grid gap-2 text-center ">
+         <div class="">
+         
+          <a  id="one" class="btn btn-primary" onclick="updateDisplay(1)">1</a>
+          <a  id="two" class="btn btn-primary"onclick="updateDisplay(2)">2</a>
+        <a  id="three" class="btn btn-primary" onclick="updateDisplay(3)">3</a>
+        <a  id="add" class="btn btn-secondary"onclick="updateDisplay('add')">+</a>
+    </div>
+
+    <div class="">
+          <a  id="four" class="btn btn-primary" onclick="updateDisplay(4)">4</a>
+          <a  id="five" class="btn btn-primary" onclick="updateDisplay(5)">5</a>
+        <a  id="six" class="btn btn-primary" onclick="updateDisplay(6)">6</a>
+        <a  id="subtract" class="btn btn-secondary"onclick="updateDisplay('subtract')" >-</a>
+        </div>
+      
+    <div class="">
+        <a  id="seven" class="btn btn-primary" onclick="updateDisplay(7)">7</a>
+        <a  id="eight" class="btn btn-primary" onclick="updateDisplay(8)">8</a>
+        <a  id="nine" class="btn btn-primary" onclick="updateDisplay(9)">9</a>
+        <a  id="multiply" class="btn btn-secondary" onclick="updateDisplay('multiply')">*</a>
+    </div>
+     <div>   
+     <a  id="zero" class="btn btn-primary" onclick="updateDisplay(0)">0</a>
+     <a  id="decimal" class="btn btn-secondary" onclick="updateDisplay('decimal')">.</a>
+     <a  id="divide" class="btn btn-secondary" onclick="updateDisplay('divide')">/</a>
+     <a  id="negative-value" class="btn btn-danger  " onclick="updateDisplay('negative-value')" >+/-</a>
+    
+     </div>
+
+  
+        <a  id="equals" class="btn  btn-primary mx-5" onclick="updateDisplay('equals')">=</a>
+       <a  id="clear" class="btn btn-warning mx-5" onclick="clearDisplay()" >clear</a>
+      
+       
+    </div>
+    </div>
+
+  
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+<script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+  </body>
+</html>
